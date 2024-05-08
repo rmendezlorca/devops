@@ -29,3 +29,23 @@ jobs:
       with:
         push: true
         tags: ricardomendezlorca/awsdevops:latest
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set permissions for private key
+      run: |
+        echo "${{ env.SSH_KEYPAIR }}" > key.pem
+        chmod 600 key.pem
+    - name: Clean Docker image
+      run: |
+        ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@3.80.23.145 'docker rmi -f ricardomendezlorca/awsdevops:latest || true'
+    - name: Pull Docker image
+      run: |
+        ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@3.80.23.145 'docker pull ricardomendezlorca/awsdevops:latest'
+    - name: Stop running container
+      run: |
+        ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@3.80.23.145 'sudo docker rm -f $(docker ps -aq) || true'
+    - name: Run new container
+      run: |
+        ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@3.80.23.145 'sudo docker run -d -p 80:80 ricardomendezlorca/awsdevops:latest'
