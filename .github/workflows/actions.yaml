@@ -5,9 +5,7 @@ on:
     - main
 
 env:
-  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-  DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
-  SSH_KEYPAIR: ${{ secrets.SSH_KEYPAIR}}
+  SSH_KEYPAIR: ${{ secrets.SSH_KEYPAIR }}
 
 jobs:
   build:
